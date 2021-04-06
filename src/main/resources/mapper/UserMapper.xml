@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.jqssm.dao.UserMapper">
+    <select id="denru" parameterType="String" resultType="Integer">
+	SELECT userid FROM `user` WHERE username=#{username} AND `password`=#{password}
+    </select>
+
+    <select id="denrun" parameterType="String" resultType="User">
+	SELECT * FROM `user` WHERE username=#{username} AND `password`=#{password}
+    </select>
+
+    <insert id="zhuche" parameterType="user" >
+	INSERT INTO `user`(`user`.username,`user`.`password`) VALUES(#{username},#{password})
+    </insert>
+
+    <select id="users"  resultType="User">
+	SELECT * FROM `user`
+    </select>
+
+    <insert id="shuo" parameterType="shuo" >
+	INSERT INTO shuo(shuo.pinlun,shuo.file,shuo.time,shuo.userid) VALUES(#{pinlun},#{file},#{time},#{userid})
+    </insert>
+
+    <select id="shuos"  resultMap="shuosw">
+	    SELECT shuo.*,pin.pinid,pin.userid AS pin_userid,pin.pin,pin.pintime,pin.zt AS pin_zt
+        FROM shuo LEFT JOIN pin
+        ON shuo.shuoid=pin.shuoid
+    </select>
+
+    <select id="shuoss"  parameterType="Integer" resultMap="shuosw">
+	    SELECT shuo.*,pin.pinid,pin.userid AS pin_userid,pin.pin,pin.pintime,pin.zt AS pin_zt
+        FROM shuo LEFT JOIN pin
+        ON shuo.shuoid=pin.shuoid
+        where shuo.userid=#{userid}
+    </select>
+    <resultMap type="shuo" id="shuosw">
+        <id property="shuoid" column="shuoid"/>
+        <result property="pinlun" column="pinlun"/>
+        <result property="file" column="file"/>
+        <result property="time" column="time"/>
+        <result property="zt" column="zt"/>
+        <result property="userid" column="userid"/>
+        <collection property="pins" ofType="pin">
+            <id property="pinid" column="pinid"/>
+            <result property="userid" column="pin_userid"/>
+            <result property="pin" column="pin"/>
+            <result property="pintime" column="pintime"/>
+            <result property="zt" column="pin_zt"/>
+        </collection>
+    </resultMap>
+
+    <select id="zhannum"  parameterType="shuo" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM zhan
+        WHERE zhan.shuoid=#{shuoid}
+    </select>
+
+    <insert id="pin" parameterType="pin" >
+	    INSERT INTO pin(pin.userid,pin.shuoid,pin.pin,pin.pintime) VALUES(#{userid},#{shuoid},#{pin},#{pintime})
+    </insert>
+
+    <select id="ppin" parameterType="pin" resultType="pin">
+	    SELECT *
+        FROM pin
+        WHERE pin.shuoid=#{shuoid}
+    </select>
+
+
+    <select id="name"  parameterType="Integer" resultType="String">
+	   SELECT `user`.`name`
+        FROM `user`
+        WHERE `user`.userid=#{userid}
+    </select>
+
+    <select id="dianzhan"  parameterType="shuo" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM zhan
+        WHERE zhan.shuoid=#{shuoid}
+    </select>
+
+    <select id="ifdianzhan"  parameterType="shuo" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM zhan
+        WHERE zhan.shuoid=#{shuoid} AND zhan.userid=#{userid}
+    </select>
+
+    <insert id="addzhan" parameterType="shuo" >
+	    INSERT INTO zhan(zhan.userid,zhan.shuoid) VALUES(#{userid},#{shuoid})
+    </insert>
+
+    <select id="sa"  parameterType="Integer" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM shuo
+        WHERE shuo.userid=#{userid}
+    </select>
+
+    <select id="sb"  parameterType="Integer" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM pin
+        WHERE pin.userid=#{userid}
+    </select>
+
+    <select id="sc"  parameterType="Integer" resultType="Integer">
+	    SELECT COUNT(*)
+        FROM zhan
+        WHERE zhan.userid=#{userid}
+    </select>
+
+</mapper>
